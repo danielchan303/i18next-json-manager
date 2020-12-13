@@ -72,7 +72,7 @@ function App() {
         <h1 id="heading">i18n Manager</h1>
       </header>
       <main>
-        <div className="card">
+        <div className="card horizontalRow">
           <button
             onClick={() => {
               const backup = prompt("Input the backup below");

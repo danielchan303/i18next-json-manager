@@ -44,43 +44,47 @@ const Row = props => {
                 Delete Nested Item
               </button>
             </div>
-            <table>
-              <tr>
-                <th>key</th>
-                <th>en</th>
-                <th>tc</th>
-                <th>Del</th>
-              </tr>
-              {Object.entries(mainValue).map(([nestedKey, nestedValue]) => {
-                return (
+            {Object.entries(mainValue).length > 0 ? (
+              <>
+                <table>
                   <tr>
-                    <td>
-                      <input 
-                        type="text" 
-                        value={nestedKey}
-                        onChange={(event) => updateNestedKey(mainKey, nestedKey, event.target.value)} />
-                    </td>
-                    <td>
-                      <input 
-                        type="text" 
-                        value={nestedValue.en}
-                        onChange={(event) => nestedKeyValueChangeHandler(mainKey, nestedKey, 'en', event.target.value)}
-                        onBlur={() => fillEmptyHandler(mainKey, nestedKey, nestedValue)} />
-                    </td>
-                    <td>
-                      <input 
-                        type="text" 
-                        value={nestedValue.tc}
-                        onChange={(event) => nestedKeyValueChangeHandler(mainKey, nestedKey, 'tc', event.target.value)} />
-                    </td>
-                    <td>
-                      <button onClick={() => props.deleteNestedKeyValue(mainKey, nestedKey)}>del</button>
-                    </td>
+                    <th>key</th>
+                    <th>en</th>
+                    <th>tc</th>
+                    <th>Del</th>
                   </tr>
-                );
-              })}
-            </table>
-            <br />
+                  {Object.entries(mainValue).map(([nestedKey, nestedValue]) => {
+                    return (
+                      <tr>
+                        <td>
+                          <input 
+                            type="text" 
+                            value={nestedKey}
+                            onChange={(event) => updateNestedKey(mainKey, nestedKey, event.target.value)} />
+                        </td>
+                        <td>
+                          <input 
+                            type="text" 
+                            value={nestedValue.en}
+                            onChange={(event) => nestedKeyValueChangeHandler(mainKey, nestedKey, 'en', event.target.value)}
+                            onBlur={() => fillEmptyHandler(mainKey, nestedKey, nestedValue)} />
+                        </td>
+                        <td>
+                          <input 
+                            type="text" 
+                            value={nestedValue.tc}
+                            onChange={(event) => nestedKeyValueChangeHandler(mainKey, nestedKey, 'tc', event.target.value)} />
+                        </td>
+                        <td>
+                          <button onClick={() => props.deleteNestedKeyValue(mainKey, nestedKey)}>del</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </table>
+                <br />
+              </>
+            ): null}
           </>
         );
       })}
