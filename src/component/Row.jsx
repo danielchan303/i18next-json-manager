@@ -61,7 +61,7 @@ const Row = props => {
                             type="text" 
                             value={nestedKey}
                             onChange={(event) => updateNestedKey(mainKey, nestedKey, event.target.value)} />
-                          <button class="copy-button" data-clipboard-text={`${mainKey}.${nestedKey}`}>Copy</button>
+                          <button class="copy-button" data-clipboard-text={`t('${mainKey}.${nestedKey}')`}>Copy</button>
                         </td>
                         <td>
                           <input 

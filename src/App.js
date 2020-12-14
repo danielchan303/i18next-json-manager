@@ -70,13 +70,15 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1 id="heading">i18n Manager</h1>
-      </header>
-      <main>
-        <div className="card horizontalRow">
+        <div>
+          <button className="header-button" onClick={createNewMainKey}>
+            Add main category
+          </button>
           <button
+            className="header-button"
             onClick={() => {
               const backup = prompt("Input the backup below");
-              if (backup !== "") {
+              if (backup) {
                 dispatch.i18n.importFromBackup(JSON.parse(backup));
               }
             }}
@@ -84,6 +86,7 @@ function App() {
             Import
           </button>
           <button
+            className="header-button"
             onClick={() => {
               backupRef.current.click();
               enRef.current.click();
@@ -93,6 +96,10 @@ function App() {
           >
             Download
           </button>
+        </div>
+      </header>
+      <main>
+        <div className="card horizontalRow">
           <a
             ref={backupRef}
             style={{ display: "none" }}
@@ -139,10 +146,6 @@ function App() {
           </a>
         </div>
         <div className="card">
-          <header className="horizontalRow">
-            <h2>Manager</h2>
-            <button onClick={createNewMainKey}>Add main category</button>
-          </header>
           <div>
             <Row
               i18n={i18n}

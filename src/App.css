@@ -12,6 +12,18 @@ body {
 
 .App-header {
   background-color: #000;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+}
+
+.header-button {
+  color: #fff;
+  height: 100%;
+  margin-left: 5px;
+  background-color: #777;
 }
 
 #heading {
@@ -27,7 +39,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-top: 20px;
+  padding-top: 50px;
 }
 
 .card {
