@@ -55,7 +55,7 @@ function App() {
       }
       output[mainKey] = subObj;
     }
-    return JSON.stringify(output);
+    return JSON.stringify({ translation: output }, undefined, 4);
   };
 
   const output = getLangJSON("tc");
