@@ -27,24 +27,24 @@ const Row = props => {
 
   return (
     <>
-      {Object.entries(props.i18n).map(([mainKey, mainValue]) => {
+      {props.i18n.map((item) => {
         return (
           <>
             <div className="horizontalRow">
               <input 
                 type="text"
-                value={mainKey}
+                value={item.key}
                 onChange={(event) => {
-                  props.changeMainKeyName(mainKey, event.target.value)
+                  props.changeMainKeyName(item.key, event.target.value)
                 }} />
-              <button onClick={() => props.createNewNestedKey(mainKey)}>
+              <button onClick={() => props.createNewNestedKey(item.key)}>
                 Add item
               </button>
-              <button onClick={() => deleteMainKeyHandler(mainKey)}>
+              <button onClick={() => deleteMainKeyHandler(item.key)}>
                 Delete Nested Item
               </button>
             </div>
-            {Object.entries(mainValue).length > 0 ? (
+            {Object.entries(item.values).length > 0 ? (
               <>
                 <table>
                   <tr>
@@ -53,31 +53,31 @@ const Row = props => {
                     <th>tc</th>
                     <th>Del</th>
                   </tr>
-                  {Object.entries(mainValue).map(([nestedKey, nestedValue]) => {
+                  {item.values.map((nestedItem) => {
                     return (
                       <tr>
                         <td>
                           <input 
                             type="text" 
-                            value={nestedKey}
-                            onChange={(event) => updateNestedKey(mainKey, nestedKey, event.target.value)} />
-                          <button class="copy-button" data-clipboard-text={`t('${mainKey}.${nestedKey}')`}>Copy</button>
+                            value={nestedItem.key}
+                            onChange={(event) => updateNestedKey(item.key, nestedItem.key, event.target.value)} />
+                          <button class="copy-button" data-clipboard-text={`t('${item.key}.${nestedItem.key}')`}>Copy</button>
                         </td>
                         <td>
                           <input 
                             type="text" 
-                            value={nestedValue.en}
-                            onChange={(event) => nestedKeyValueChangeHandler(mainKey, nestedKey, 'en', event.target.value)}
-                            onBlur={() => fillEmptyHandler(mainKey, nestedKey, nestedValue)} />
+                            value={nestedItem.en}
+                            onChange={(event) => nestedKeyValueChangeHandler(item.key, nestedItem.key, 'en', event.target.value)}
+                            onBlur={() => fillEmptyHandler(item.key, nestedItem.key, nestedItem.en)} />
                         </td>
                         <td>
                           <input 
                             type="text" 
-                            value={nestedValue.tc}
-                            onChange={(event) => nestedKeyValueChangeHandler(mainKey, nestedKey, 'tc', event.target.value)} />
+                            value={nestedItem.tc}
+                            onChange={(event) => nestedKeyValueChangeHandler(item.key, nestedItem.key, 'tc', event.target.value)} />
                         </td>
                         <td>
-                          <button onClick={() => props.deleteNestedKeyValue(mainKey, nestedKey)}>del</button>
+                          <button onClick={() => props.deleteNestedKeyValue(item.key, nestedItem.key)}>del</button>
                         </td>
                       </tr>
                     );

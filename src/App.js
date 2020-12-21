@@ -48,12 +48,12 @@ function App() {
 
   const getLangJSON = language => {
     const output = {};
-    for (let [mainKey, mainValue] of Object.entries(i18n)) {
+    for (let mainItem of i18n) {
       const subObj = {};
-      for (let [nestedKey, nestedObj] of Object.entries(mainValue)) {
-        subObj[nestedKey] = nestedObj[language];
+      for (let nestedItem of mainItem.values) {
+        subObj[nestedItem.key] = nestedItem[language];
       }
-      output[mainKey] = subObj;
+      output[mainItem.key] = subObj;
     }
     return JSON.stringify({ translation: output }, undefined, 4);
   };

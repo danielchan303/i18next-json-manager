@@ -1,52 +1,87 @@
 import { sify } from "chinese-conv";
+import { v4 as uuidv4 } from "uuid";
 
 const i18n = {
-  state: {}, // initial state
+  state: [], // initial state
   reducers: {
     // handle state changes with pure functions
     importFromBackup(state, payload) {
+      // const data = [];
+      // for (let [mainKey, mainValue] of Object.entries(payload)) {
+      //   const mainKeyData = [];
+      //   for (let [nestedKey, nestedValue] of Object.entries(mainValue)) {
+      //     mainKeyData.push({
+      //       key: nestedKey,
+      //       en: nestedValue.en,
+      //       tc: nestedValue.tc,
+      //       sc: nestedValue.sc,
+      //     });
+      //   }
+      //   data.push({
+      //     key: mainKey,
+      //     values: mainKeyData,
+      //   });
+      // }
+      // console.log("output data", data);
       return payload;
     },
     createNewMainKey(state, payload) {
-      if (!state.hasOwnProperty(payload.key)) {
-        state[payload.key] = {};
+      if (!state.some(item => item.key === payload.key)) {
+        state.push({ key: payload.key, values: [] });
       }
       return state;
     },
     changeMainKeyName(state, payload) {
-      // create clone of the value
-      const data = state[payload.key];
-      // delete the entries
-      delete state[payload.key];
+      // find index
+      const data = state.find(item => item.key === payload.key);
       // assign the original data to new key
-      state[payload.value] = data;
+      data.key = payload.value;
       return state;
     },
     deleteMainKey(state, payload) {
-      delete state[payload.key];
+      const index = state.findIndex(item => item.key === payload.key);
+      state.splice(index, 1);
       return state;
     },
     newNestedKey(state, payload) {
-      if (!state[payload.key].hasOwnProperty(payload.nestedKey)) {
-        state[payload.key][payload.nestedKey] = { en: "", tc: "", sc: "" };
+      const mainValue = state.find(item => item.key === payload.key);
+      const nestedItem = mainValue.values.find(
+        item => item.key === payload.nestedKey
+      );
+      if (!nestedItem) {
+        mainValue.values.push({
+          key: payload.nestedKey,
+          en: "",
+          tc: "",
+          sc: "",
+        });
       }
       return state;
     },
     updateNestedKey(state, payload) {
-      const data = state[payload.mainKey][payload.nestedKey];
-      delete state[payload.mainKey][payload.nestedKey];
-      state[payload.mainKey][payload.newNestedKey] = data;
+      const mainValue = state.find(item => item.key === payload.mainKey);
+      const nestedItem = mainValue.values.find(
+        item => item.key === payload.nestedKey
+      );
+      nestedItem.key = payload.newNestedKey;
       return state;
     },
     updateNestedKeyValue(state, payload) {
       const { key, nestedKey, language, value } = payload;
-      state[key][nestedKey][language] = value;
-      state[key][nestedKey].sc = sify(state[key][nestedKey].tc);
+      const mainValue = state.find(item => item.key === key);
+      const nestedItem = mainValue.values.find(item => item.key === nestedKey);
+      nestedItem[language] = value;
+      nestedItem.sc = sify(nestedItem.tc);
       return state;
     },
     deleteNestedKeyValue(state, payload) {
       const { key, nestedKey } = payload;
-      delete state[key][nestedKey];
+      const mainValue = state.find(item => item.key === key);
+      const nestedItemIndex = mainValue.values.findIndex(
+        item => item.key === nestedKey
+      );
+
+      mainValue.values.splice(nestedItemIndex, 1);
       return state;
     },
   },
