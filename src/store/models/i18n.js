@@ -32,7 +32,7 @@ const i18n = {
     },
     changeMainKeyName(state, payload) {
       // find index
-      const data = state.find((item) => item.key === payload.key);
+      const data = state[payload.mainIndex];
       // assign the original data to new key
       data.key = payload.value;
       return state;

@@ -1,8 +1,8 @@
 import * as React from "react";
 
 const Row = (props) => {
-  const lastKey = React.useRef();
-  console.log("lastKey", lastKey.current);
+  const lastMainKey = React.useRef();
+  const lastNestedKey = React.useRef();
 
   const deleteMainKeyHandler = (mainKey) => {
     const confirm = prompt("Are you sure to delete? Type 'yes' to confirm");
@@ -12,18 +12,28 @@ const Row = (props) => {
   };
 
   const updateNestedKey = (mainIndex, nestedIndex, newNestedKey) => {
-    console.log("lastKey", lastKey.current);
+    console.log("lastNestedKey", lastNestedKey.current);
     props.updateNestedKey(mainIndex, nestedIndex, newNestedKey);
   };
 
-  const onBlurCheck = (array, mainIndex, nestedIndex) => {
+  const onMainKeyBlurCheck = (array, mainIndex) => {
+    const keys = array.map((item) => item.key);
+    const keysWithoutDuplicate = [...new Set(keys)];
+    if (keys.length !== keysWithoutDuplicate.length) {
+      alert("Key cannot be duplicate");
+      // reverse key update
+      props.changeMainKeyName(mainIndex, lastMainKey.current);
+    }
+  };
+
+  const onNestedKeyBlurCheck = (array, mainIndex, nestedIndex) => {
     const keys = array.map((item) => item.key);
     console.log("onBlur array", keys);
     const keysWithoutDuplicate = [...new Set(keys)];
     if (keys.length !== keysWithoutDuplicate.length) {
       alert("Key cannot be duplicate");
       // reverse key update
-      updateNestedKey(mainIndex, nestedIndex, lastKey.current);
+      updateNestedKey(mainIndex, nestedIndex, lastNestedKey.current);
     }
   };
 
@@ -60,8 +70,10 @@ const Row = (props) => {
                 type="text"
                 value={item.key}
                 onChange={(event) => {
-                  props.changeMainKeyName(item.key, event.target.value);
+                  props.changeMainKeyName(mainIndex, event.target.value);
                 }}
+                onFocus={(event) => (lastMainKey.current = event.target.value)}
+                onBlur={() => onMainKeyBlurCheck(props.i18n, mainIndex)}
               />
               <button onClick={() => props.createNewNestedKey(item.key)}>
                 Add item
@@ -94,10 +106,14 @@ const Row = (props) => {
                               )
                             }
                             onFocus={(event) =>
-                              (lastKey.current = event.target.value)
+                              (lastNestedKey.current = event.target.value)
                             }
                             onBlur={() =>
-                              onBlurCheck(item.values, mainIndex, nestedIndex)
+                              onNestedKeyBlurCheck(
+                                item.values,
+                                mainIndex,
+                                nestedIndex
+                              )
                             }
                           />
                           <button

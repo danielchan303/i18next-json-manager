@@ -16,8 +16,8 @@ function App() {
     }
   };
 
-  const changeMainKeyName = (key, value) => {
-    dispatch.i18n.changeMainKeyName({ key, value });
+  const changeMainKeyName = (mainIndex, value) => {
+    dispatch.i18n.changeMainKeyName({ mainIndex, value });
   };
 
   const deleteMainKey = (key) => {
