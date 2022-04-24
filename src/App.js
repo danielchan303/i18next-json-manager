@@ -7,7 +7,7 @@ import Row from "./component/Row";
 
 function App() {
   const dispatch = useDispatch();
-  const i18n = useSelector(state => state.i18n);
+  const i18n = useSelector((state) => state.i18n);
 
   const createNewMainKey = () => {
     const key = prompt("Enter the new key name: ");
@@ -20,19 +20,19 @@ function App() {
     dispatch.i18n.changeMainKeyName({ key, value });
   };
 
-  const deleteMainKey = key => {
+  const deleteMainKey = (key) => {
     dispatch.i18n.deleteMainKey({ key });
   };
 
-  const createNewNestedKey = key => {
+  const createNewNestedKey = (key) => {
     const nestedKey = prompt("Enter the new nested key name: ");
     if (nestedKey) {
       dispatch.i18n.newNestedKey({ key, nestedKey });
     }
   };
 
-  const updateNestedKey = (mainKey, nestedKey, newNestedKey) => {
-    dispatch.i18n.updateNestedKey({ mainKey, nestedKey, newNestedKey });
+  const updateNestedKey = (mainIndex, nestedIndex, newNestedKey) => {
+    dispatch.i18n.updateNestedKey({ mainIndex, nestedIndex, newNestedKey });
   };
 
   const updateNestedKeyValue = ({ key, nestedKey, language, value }) => {
@@ -46,7 +46,7 @@ function App() {
     }
   };
 
-  const getLangJSON = language => {
+  const getLangJSON = (language) => {
     const output = {};
     for (let mainItem of i18n) {
       const subObj = {};

@@ -1,5 +1,4 @@
 import { sify } from "chinese-conv";
-import { v4 as uuidv4 } from "uuid";
 
 const i18n = {
   state: [], // initial state
@@ -26,27 +25,27 @@ const i18n = {
       return payload;
     },
     createNewMainKey(state, payload) {
-      if (!state.some(item => item.key === payload.key)) {
+      if (!state.some((item) => item.key === payload.key)) {
         state.push({ key: payload.key, values: [] });
       }
       return state;
     },
     changeMainKeyName(state, payload) {
       // find index
-      const data = state.find(item => item.key === payload.key);
+      const data = state.find((item) => item.key === payload.key);
       // assign the original data to new key
       data.key = payload.value;
       return state;
     },
     deleteMainKey(state, payload) {
-      const index = state.findIndex(item => item.key === payload.key);
+      const index = state.findIndex((item) => item.key === payload.key);
       state.splice(index, 1);
       return state;
     },
     newNestedKey(state, payload) {
-      const mainValue = state.find(item => item.key === payload.key);
+      const mainValue = state.find((item) => item.key === payload.key);
       const nestedItem = mainValue.values.find(
-        item => item.key === payload.nestedKey
+        (item) => item.key === payload.nestedKey
       );
       if (!nestedItem) {
         mainValue.values.push({
@@ -59,26 +58,28 @@ const i18n = {
       return state;
     },
     updateNestedKey(state, payload) {
-      const mainValue = state.find(item => item.key === payload.mainKey);
-      const nestedItem = mainValue.values.find(
-        item => item.key === payload.nestedKey
-      );
-      nestedItem.key = payload.newNestedKey;
+      const mainIndex = payload.mainIndex;
+      const nestedIndex = payload.nestedIndex;
+      const mainValue = state[mainIndex];
+      // Update nested key
+      mainValue.values[nestedIndex].key = payload.newNestedKey;
       return state;
     },
     updateNestedKeyValue(state, payload) {
       const { key, nestedKey, language, value } = payload;
-      const mainValue = state.find(item => item.key === key);
-      const nestedItem = mainValue.values.find(item => item.key === nestedKey);
+      const mainValue = state.find((item) => item.key === key);
+      const nestedItem = mainValue.values.find(
+        (item) => item.key === nestedKey
+      );
       nestedItem[language] = value;
       nestedItem.sc = sify(nestedItem.tc);
       return state;
     },
     deleteNestedKeyValue(state, payload) {
       const { key, nestedKey } = payload;
-      const mainValue = state.find(item => item.key === key);
+      const mainValue = state.find((item) => item.key === key);
       const nestedItemIndex = mainValue.values.findIndex(
-        item => item.key === nestedKey
+        (item) => item.key === nestedKey
       );
 
       mainValue.values.splice(nestedItemIndex, 1);
