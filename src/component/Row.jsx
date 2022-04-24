@@ -42,6 +42,7 @@ const Row = (props) => {
   };
 
   const fillEmptyHandler = (key, nestedKey, nestedValue) => {
+    console.log("fillEmptyHandler", key, nestedKey, nestedValue);
     if (nestedValue.tc === "") {
       props.updateNestedKeyValue({
         key,
@@ -139,7 +140,7 @@ const Row = (props) => {
                               fillEmptyHandler(
                                 item.key,
                                 nestedItem.key,
-                                nestedItem.en
+                                nestedItem
                               )
                             }
                           />
