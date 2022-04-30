@@ -1,7 +1,8 @@
-import logo from "./logo.svg";
+import "./logo.svg";
 import "./App.css";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import AppBar from "./component/AppBar";
 
 import Row from "./component/Row";
 
@@ -58,93 +59,10 @@ function App() {
     return JSON.stringify({ translation: output }, undefined, 4);
   };
 
-  const output = getLangJSON("tc");
-  console.log("output", output);
-
-  const backupRef = React.useRef();
-  const enRef = React.useRef();
-  const tcRef = React.useRef();
-  const scRef = React.useRef();
-
   return (
     <div className="App">
-      <header className="App-header">
-        <h1 id="heading">i18n Manager</h1>
-        <div>
-          <button className="header-button" onClick={createNewMainKey}>
-            Add main category
-          </button>
-          <button
-            className="header-button"
-            onClick={() => {
-              const backup = prompt("Input the backup below");
-              if (backup) {
-                dispatch.i18n.importFromBackup(JSON.parse(backup));
-              }
-            }}
-          >
-            Import
-          </button>
-          <button
-            className="header-button"
-            onClick={() => {
-              backupRef.current.click();
-              enRef.current.click();
-              tcRef.current.click();
-              scRef.current.click();
-            }}
-          >
-            Download
-          </button>
-        </div>
-      </header>
+      <AppBar getLangJSON={getLangJSON} createNewMainKey={createNewMainKey} />
       <main>
-        <div className="card horizontalRow">
-          <a
-            ref={backupRef}
-            style={{ display: "none" }}
-            href={
-              "data:text/plain;charset=utf-8," +
-              encodeURIComponent(JSON.stringify(i18n))
-            }
-            download="backup.json"
-          >
-            Backup
-          </a>
-          <a
-            ref={enRef}
-            style={{ display: "none" }}
-            href={
-              "data:text/plain;charset=utf-8," +
-              encodeURIComponent(getLangJSON("en"))
-            }
-            download="en.json"
-          >
-            EN
-          </a>
-          <a
-            ref={tcRef}
-            style={{ display: "none" }}
-            href={
-              "data:text/plain;charset=utf-8," +
-              encodeURIComponent(getLangJSON("tc"))
-            }
-            download="tc.json"
-          >
-            TC
-          </a>
-          <a
-            ref={scRef}
-            style={{ display: "none" }}
-            href={
-              "data:text/plain;charset=utf-8," +
-              encodeURIComponent(getLangJSON("sc"))
-            }
-            download="sc.json"
-          >
-            SC
-          </a>
-        </div>
         <div className="card">
           <div>
             <Row
