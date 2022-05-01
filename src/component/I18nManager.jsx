@@ -63,12 +63,13 @@ const Row = (props) => {
   };
 
   return (
-    <>
+    <div>
       {props.i18n.map((item, mainIndex) => {
         return (
           <>
             <div className="horizontalRow">
               <input
+                id="mainKeyInput"
                 type="text"
                 value={item.key}
                 onChange={(event) => {
@@ -103,13 +104,14 @@ const Row = (props) => {
               </button>
             </div>
             {Object.entries(item.values).length > 0 ? (
-              <>
+              <div className="groupContainer">
                 <table>
                   <thead>
                     <tr>
-                      <th>key</th>
+                      <th style={{ width: 1 }}>key</th>
                       <th>en</th>
                       <th>tc</th>
+                      <th>sc</th>
                       <th>Del</th>
                     </tr>
                   </thead>
@@ -128,62 +130,85 @@ const Row = (props) => {
                       return (
                         <tr>
                           <td>
-                            <input
-                              type="text"
-                              value={nestedItem.key}
-                              onChange={(event) => {
-                                updateNestedKeyHandler(
-                                  mainIndex,
-                                  nestedIndex,
-                                  event.target.value
-                                );
-                              }}
-                              onFocus={lastNestedKeySaver}
-                              onBlur={checkDuplicateHandler}
-                            />
-                            <button
-                              className="copy-button"
-                              data-clipboard-text={`t('${item.key}.${nestedItem.key}')`}
-                            >
-                              Copy
-                            </button>
+                            <div className="flexBox">
+                              <input
+                                style={{ flex: 1 }}
+                                type="text"
+                                value={nestedItem.key}
+                                onChange={(event) => {
+                                  updateNestedKeyHandler(
+                                    mainIndex,
+                                    nestedIndex,
+                                    event.target.value
+                                  );
+                                }}
+                                onFocus={lastNestedKeySaver}
+                                onBlur={checkDuplicateHandler}
+                              />
+                              <button
+                                className="copy-button"
+                                data-clipboard-text={`t('${item.key}.${nestedItem.key}')`}
+                              >
+                                Copy
+                              </button>
+                            </div>
                           </td>
                           <td>
-                            <input
-                              type="text"
-                              value={nestedItem.en}
-                              onChange={(event) =>
-                                nestedValueChangeHandler(
-                                  mainIndex,
-                                  nestedIndex,
-                                  "en",
-                                  event.target.value
-                                )
-                              }
-                              onBlur={() =>
-                                fillEmptyHandler(
-                                  mainIndex,
-                                  nestedIndex,
-                                  nestedItem
-                                )
-                              }
-                            />
+                            <div className="flexBox">
+                              <input
+                                type="text"
+                                value={nestedItem.en}
+                                onChange={(event) =>
+                                  nestedValueChangeHandler(
+                                    mainIndex,
+                                    nestedIndex,
+                                    "en",
+                                    event.target.value
+                                  )
+                                }
+                                onBlur={() =>
+                                  fillEmptyHandler(
+                                    mainIndex,
+                                    nestedIndex,
+                                    nestedItem
+                                  )
+                                }
+                              />
+                            </div>
                           </td>
                           <td>
-                            <input
-                              type="text"
-                              value={nestedItem.tc}
-                              onChange={(event) =>
-                                nestedValueChangeHandler(
-                                  mainIndex,
-                                  nestedIndex,
-                                  "tc",
-                                  event.target.value
-                                )
-                              }
-                            />
+                            <div className="flexBox">
+                              <input
+                                type="text"
+                                value={nestedItem.tc}
+                                onChange={(event) =>
+                                  nestedValueChangeHandler(
+                                    mainIndex,
+                                    nestedIndex,
+                                    "tc",
+                                    event.target.value
+                                  )
+                                }
+                              />
+                            </div>
                           </td>
                           <td>
+                            <div className="flexBox">
+                              <input
+                                type="text"
+                                value={nestedItem.sc}
+                                onChange={(event) =>
+                                  nestedValueChangeHandler(
+                                    mainIndex,
+                                    nestedIndex,
+                                    "sc",
+                                    event.target.value
+                                  )
+                                }
+                              />
+                            </div>
+                          </td>
+                          <td style={{ width: 1 }}>
                             <button
                               onClick={() => {
                                 // delete nested item
@@ -201,13 +226,21 @@ const Row = (props) => {
                     })}
                   </tbody>
                 </table>
-                <br />
-              </>
+                <button
+                  className="insertARowHereButton"
+                  onClick={() => {
+                    // create new nested key
+                    props.createNewNestedKey(mainIndex);
+                  }}
+                >
+                  + Insert a row here
+                </button>
+              </div>
             ) : null}
           </>
         );
       })}
-    </>
+    </div>
   );
 };
 

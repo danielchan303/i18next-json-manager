@@ -50,14 +50,17 @@ main {
 .horizontalRow {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
 }
 
 button {
   align-self: center;
-  background-color: transparent;
   border: 1px solid black;
   border-radius: 5px;
+  background-color: white;
+}
+
+button:active {
+  opacity: 0.5;
 }
 
 table {
@@ -72,7 +75,31 @@ th {
   text-align: left;
 }
 
+tr:focus-within {
+  background-color: #ffffa7;
+}
+
 input {
-  width: 90%;
   border: none;
+  flex: 1;
+  background-color: transparent;
+}
+
+#mainKeyInput {
+  flex: 1;
+}
+
+.flexBox {
+  display: flex;
+}
+
+.insertARowHereButton {
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  border: none;
+}
+
+.groupContainer {
+  margin-bottom: 32px;
 }
