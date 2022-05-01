@@ -54,7 +54,7 @@ const useSocket = () => {
       });
 
       // reconnected
-      i18nSocket.on("reconnect", (error) => {
+      i18nSocket.io.on("reconnect", (error) => {
         console.log("Reconnected");
         dispatch.connection.setToConnected();
       });
