@@ -1,11 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginHandler } from "../services/firebase";
+import { loginHandler, signOutHandler } from "../services/firebase";
 
 const AppBar = (props) => {
   const { createNewMainKey, getLangJSON } = props;
   const dispatch = useDispatch();
   const i18n = useSelector((state) => state.i18n);
+  const auth = useSelector((state) => state.auth);
   const backupRef = React.useRef();
   const enRef = React.useRef();
   const tcRef = React.useRef();
@@ -44,9 +45,15 @@ const AppBar = (props) => {
         <button className="header-button" onClick={downloadHandler}>
           Download
         </button>
-        <button className="header-button" onClick={loginHandler}>
-          Login
-        </button>
+        {!auth.isAuth ? (
+          <button className="header-button" onClick={loginHandler}>
+            Login
+          </button>
+        ) : (
+          <button className="header-button" onClick={signOutHandler}>
+            Logout
+          </button>
+        )}
       </div>
       <div style={{ display: "none" }}>
         <a

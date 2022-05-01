@@ -38,12 +38,11 @@ const i18n = {
       return state;
     },
     deleteMainKey(state, payload) {
-      const index = state.findIndex((item) => item.key === payload.key);
-      state.splice(index, 1);
+      state.splice(payload.mainIndex, 1);
       return state;
     },
-    newNestedKey(state, payload) {
-      const mainValue = state.find((item) => item.key === payload.key);
+    createNewNestedKey(state, payload) {
+      const mainValue = state[payload.mainIndex];
       const nestedItem = mainValue.values.find(
         (item) => item.key === payload.nestedKey
       );
@@ -66,23 +65,20 @@ const i18n = {
       return state;
     },
     updateNestedKeyValue(state, payload) {
-      const { key, nestedKey, language, value } = payload;
-      const mainValue = state.find((item) => item.key === key);
-      const nestedItem = mainValue.values.find(
-        (item) => item.key === nestedKey
-      );
+      const { mainIndex, nestedIndex, language, value } = payload;
+      const mainValue = state[mainIndex];
+      const nestedItem = mainValue.values[nestedIndex];
       nestedItem[language] = value;
-      nestedItem.sc = sify(nestedItem.tc);
+      // if typing tc, create sc as well
+      if (language === "tc" && sify(nestedItem.tc) === nestedItem.sc) {
+        nestedItem.sc = sify(nestedItem.tc);
+      }
       return state;
     },
     deleteNestedKeyValue(state, payload) {
-      const { key, nestedKey } = payload;
-      const mainValue = state.find((item) => item.key === key);
-      const nestedItemIndex = mainValue.values.findIndex(
-        (item) => item.key === nestedKey
-      );
-
-      mainValue.values.splice(nestedItemIndex, 1);
+      const { mainIndex, nestedIndex } = payload;
+      const mainValue = state[mainIndex];
+      mainValue.values.splice(nestedIndex, 1);
       return state;
     },
   },

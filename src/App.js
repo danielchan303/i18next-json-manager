@@ -3,47 +3,88 @@ import "./App.css";
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AppBar from "./component/AppBar";
+import { useAuthStateListener } from "./services/firebase";
+import useSocket from "./services/socketio";
 
 import Row from "./component/Row";
 
 function App() {
+  useAuthStateListener();
+  useSocket();
   const dispatch = useDispatch();
   const i18n = useSelector((state) => state.i18n);
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const isConnected = useSelector((state) => state.connection.isConnected);
+  const socket = useSelector((state) => state.connection.socket);
 
   const createNewMainKey = () => {
     const key = prompt("Enter the new key name: ");
     if (key) {
       dispatch.i18n.createNewMainKey({ key });
+      socket.emit("createNewMainKey", { key });
     }
   };
 
   const changeMainKeyName = (mainIndex, value) => {
     dispatch.i18n.changeMainKeyName({ mainIndex, value });
+    socket.emit("changeMainKeyName", { mainIndex, value });
   };
 
-  const deleteMainKey = (key) => {
-    dispatch.i18n.deleteMainKey({ key });
+  const deleteMainKey = (mainIndex) => {
+    const confirm = prompt("Are you sure to delete? Type 'yes' to confirm");
+    if (confirm?.toLocaleLowerCase() === "yes") {
+      dispatch.i18n.deleteMainKey({ mainIndex });
+      socket.emit("deleteMainKey", { mainIndex });
+    }
   };
 
-  const createNewNestedKey = (key) => {
+  const createNewNestedKey = (mainIndex) => {
     const nestedKey = prompt("Enter the new nested key name: ");
     if (nestedKey) {
-      dispatch.i18n.newNestedKey({ key, nestedKey });
+      dispatch.i18n.createNewNestedKey({ mainIndex, nestedKey });
+      socket.emit("createNewNestedKey", { mainIndex, nestedKey });
     }
   };
 
   const updateNestedKey = (mainIndex, nestedIndex, newNestedKey) => {
+    console.log(
+      "mainIndex",
+      mainIndex,
+      "nestedIndex",
+      nestedIndex,
+      "newNestedKey",
+      newNestedKey
+    );
     dispatch.i18n.updateNestedKey({ mainIndex, nestedIndex, newNestedKey });
+    socket.emit("updateNestedKey", { mainIndex, nestedIndex, newNestedKey });
   };
 
-  const updateNestedKeyValue = ({ key, nestedKey, language, value }) => {
-    dispatch.i18n.updateNestedKeyValue({ key, nestedKey, language, value });
+  const updateNestedKeyValue = ({
+    mainIndex,
+    nestedIndex,
+    language,
+    value,
+  }) => {
+    dispatch.i18n.updateNestedKeyValue({
+      mainIndex,
+      nestedIndex,
+      language,
+      value,
+    });
+    socket.emit("updateNestedKeyValue", {
+      mainIndex,
+      nestedIndex,
+      language,
+      value,
+    });
   };
 
-  const deleteNestedKeyValue = (key, nestedKey) => {
-    const response = prompt("Are you sure to delete? type 'yes' to cofirm");
+  const deleteNestedKeyValue = (mainIndex, nestedIndex) => {
+    console.log("deleteNestedKeyValue", mainIndex, nestedIndex);
+    const response = prompt("Are you sure to delete? type 'yes' to confirm");
     if (response === "yes") {
-      dispatch.i18n.deleteNestedKeyValue({ key, nestedKey });
+      dispatch.i18n.deleteNestedKeyValue({ mainIndex, nestedIndex });
+      socket.emit("deleteNestedKeyValue", { mainIndex, nestedIndex });
     }
   };
 
@@ -64,17 +105,21 @@ function App() {
       <AppBar getLangJSON={getLangJSON} createNewMainKey={createNewMainKey} />
       <main>
         <div className="card">
-          <div>
-            <Row
-              i18n={i18n}
-              changeMainKeyName={changeMainKeyName}
-              deleteMainKey={deleteMainKey}
-              createNewNestedKey={createNewNestedKey}
-              updateNestedKey={updateNestedKey}
-              updateNestedKeyValue={updateNestedKeyValue}
-              deleteNestedKeyValue={deleteNestedKeyValue}
-            />
-          </div>
+          {isAuth && !isConnected ? (
+            <h2>Loading</h2>
+          ) : (
+            <div>
+              <Row
+                i18n={i18n}
+                changeMainKeyName={changeMainKeyName}
+                deleteMainKey={deleteMainKey}
+                createNewNestedKey={createNewNestedKey}
+                updateNestedKey={updateNestedKey}
+                updateNestedKeyValue={updateNestedKeyValue}
+                deleteNestedKeyValue={deleteNestedKeyValue}
+              />
+            </div>
+          )}
         </div>
         <div className="card">
           <h2>Output</h2>

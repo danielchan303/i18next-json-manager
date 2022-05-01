@@ -4,15 +4,7 @@ const Row = (props) => {
   const lastMainKey = React.useRef();
   const lastNestedKey = React.useRef();
 
-  const deleteMainKeyHandler = (mainKey) => {
-    const confirm = prompt("Are you sure to delete? Type 'yes' to confirm");
-    if (confirm.toLocaleLowerCase() === "yes") {
-      props.deleteMainKey(mainKey);
-    }
-  };
-
-  const updateNestedKey = (mainIndex, nestedIndex, newNestedKey) => {
-    console.log("lastNestedKey", lastNestedKey.current);
+  const updateNestedKeyHandler = (mainIndex, nestedIndex, newNestedKey) => {
     props.updateNestedKey(mainIndex, nestedIndex, newNestedKey);
   };
 
@@ -33,28 +25,37 @@ const Row = (props) => {
     if (keys.length !== keysWithoutDuplicate.length) {
       alert("Key cannot be duplicate");
       // reverse key update
-      updateNestedKey(mainIndex, nestedIndex, lastNestedKey.current);
+      updateNestedKeyHandler(mainIndex, nestedIndex, lastNestedKey.current);
     }
   };
 
-  const nestedKeyValueChangeHandler = (key, nestedKey, language, value) => {
-    props.updateNestedKeyValue({ key, nestedKey, language, value });
+  const nestedValueChangeHandler = (
+    mainIndex,
+    nestedIndex,
+    language,
+    value
+  ) => {
+    props.updateNestedKeyValue({
+      mainIndex,
+      nestedIndex,
+      language,
+      value,
+    });
   };
 
-  const fillEmptyHandler = (key, nestedKey, nestedValue) => {
-    console.log("fillEmptyHandler", key, nestedKey, nestedValue);
+  const fillEmptyHandler = (mainIndex, nestedIndex, nestedValue) => {
     if (nestedValue.tc === "") {
       props.updateNestedKeyValue({
-        key,
-        nestedKey,
+        mainIndex,
+        nestedIndex,
         language: "tc",
         value: nestedValue.en,
       });
     }
     if (nestedValue.sc === "") {
       props.updateNestedKeyValue({
-        key,
-        nestedKey,
+        mainIndex,
+        nestedIndex,
         language: "sc",
         value: nestedValue.en,
       });
@@ -71,109 +72,134 @@ const Row = (props) => {
                 type="text"
                 value={item.key}
                 onChange={(event) => {
-                  props.changeMainKeyName(mainIndex, event.target.value);
+                  // Change main key
+                  const value = event.target.value;
+                  props.changeMainKeyName(mainIndex, value);
                 }}
-                onFocus={(event) => (lastMainKey.current = event.target.value)}
-                onBlur={() => onMainKeyBlurCheck(props.i18n, mainIndex)}
+                onFocus={(event) => {
+                  // save the lastMainKey, in case already exist revert
+                  lastMainKey.current = event.target.value;
+                }}
+                onBlur={() => {
+                  // check if key already exist, revert
+                  onMainKeyBlurCheck(props.i18n, mainIndex);
+                }}
               />
-              <button onClick={() => props.createNewNestedKey(item.key)}>
+              <button
+                onClick={() => {
+                  // create new nested key
+                  props.createNewNestedKey(mainIndex);
+                }}
+              >
                 Add item
               </button>
-              <button onClick={() => deleteMainKeyHandler(item.key)}>
+              <button
+                onClick={() => {
+                  // delete main key
+                  props.deleteMainKey(mainIndex);
+                }}
+              >
                 Delete Nested Item
               </button>
             </div>
             {Object.entries(item.values).length > 0 ? (
               <>
                 <table>
-                  <tr>
-                    <th>key</th>
-                    <th>en</th>
-                    <th>tc</th>
-                    <th>Del</th>
-                  </tr>
-                  {item.values.map((nestedItem, nestedIndex) => {
-                    return (
-                      <tr>
-                        <td>
-                          <input
-                            type="text"
-                            value={nestedItem.key}
-                            onChange={(event) =>
-                              updateNestedKey(
-                                mainIndex,
-                                nestedIndex,
-                                event.target.value
-                              )
-                            }
-                            onFocus={(event) =>
-                              (lastNestedKey.current = event.target.value)
-                            }
-                            onBlur={() =>
-                              onNestedKeyBlurCheck(
-                                item.values,
-                                mainIndex,
-                                nestedIndex
-                              )
-                            }
-                          />
-                          <button
-                            class="copy-button"
-                            data-clipboard-text={`t('${item.key}.${nestedItem.key}')`}
-                          >
-                            Copy
-                          </button>
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={nestedItem.en}
-                            onChange={(event) =>
-                              nestedKeyValueChangeHandler(
-                                item.key,
-                                nestedItem.key,
-                                "en",
-                                event.target.value
-                              )
-                            }
-                            onBlur={() =>
-                              fillEmptyHandler(
-                                item.key,
-                                nestedItem.key,
-                                nestedItem
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={nestedItem.tc}
-                            onChange={(event) =>
-                              nestedKeyValueChangeHandler(
-                                item.key,
-                                nestedItem.key,
-                                "tc",
-                                event.target.value
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <button
-                            onClick={() =>
-                              props.deleteNestedKeyValue(
-                                item.key,
-                                nestedItem.key
-                              )
-                            }
-                          >
-                            del
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  <thead>
+                    <tr>
+                      <th>key</th>
+                      <th>en</th>
+                      <th>tc</th>
+                      <th>Del</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {item.values.map((nestedItem, nestedIndex) => {
+                      const lastNestedKeySaver = (event) =>
+                        (lastNestedKey.current = event.target.value);
+
+                      const checkDuplicateHandler = () =>
+                        onNestedKeyBlurCheck(
+                          item.values,
+                          mainIndex,
+                          nestedIndex
+                        );
+
+                      return (
+                        <tr>
+                          <td>
+                            <input
+                              type="text"
+                              value={nestedItem.key}
+                              onChange={(event) => {
+                                updateNestedKeyHandler(
+                                  mainIndex,
+                                  nestedIndex,
+                                  event.target.value
+                                );
+                              }}
+                              onFocus={lastNestedKeySaver}
+                              onBlur={checkDuplicateHandler}
+                            />
+                            <button
+                              className="copy-button"
+                              data-clipboard-text={`t('${item.key}.${nestedItem.key}')`}
+                            >
+                              Copy
+                            </button>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={nestedItem.en}
+                              onChange={(event) =>
+                                nestedValueChangeHandler(
+                                  mainIndex,
+                                  nestedIndex,
+                                  "en",
+                                  event.target.value
+                                )
+                              }
+                              onBlur={() =>
+                                fillEmptyHandler(
+                                  mainIndex,
+                                  nestedIndex,
+                                  nestedItem
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              value={nestedItem.tc}
+                              onChange={(event) =>
+                                nestedValueChangeHandler(
+                                  mainIndex,
+                                  nestedIndex,
+                                  "tc",
+                                  event.target.value
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <button
+                              onClick={() => {
+                                // delete nested item
+                                props.deleteNestedKeyValue(
+                                  mainIndex,
+                                  nestedIndex
+                                );
+                              }}
+                            >
+                              del
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
                 </table>
                 <br />
               </>
