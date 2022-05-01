@@ -13,9 +13,12 @@ const useSocket = () => {
 
     if (isAuth && !storeSocket) {
       // if login, create socket
-      i18nSocket = io.connect("http://127.0.0.1:3001/i18n", {
-        timeout: 2000,
-      });
+      i18nSocket = io.connect(
+        "https://realtime-todo-daniel-chan.herokuapp.com/i18n",
+        {
+          timeout: 2000,
+        }
+      );
       dispatch.connection.setSocket({ socket: i18nSocket });
 
       // auth for further action
@@ -37,6 +40,7 @@ const useSocket = () => {
       // connection error
       i18nSocket.on("connect_error", (error) => {
         console.log("Cannot connect to socket.io", error);
+        dispatch.connection.setToDisconnected();
       });
 
       // disconnected, retry
@@ -52,6 +56,7 @@ const useSocket = () => {
       // reconnected
       i18nSocket.on("reconnect", (error) => {
         console.log("Reconnected");
+        dispatch.connection.setToConnected();
       });
 
       i18nSocket.on("getI18nData", (response) => {

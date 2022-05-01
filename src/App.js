@@ -6,7 +6,7 @@ import AppBar from "./component/AppBar";
 import { useAuthStateListener } from "./services/firebase";
 import useSocket from "./services/socketio";
 
-import Row from "./component/Row";
+import I18nManager from "./component/I18nManager";
 
 function App() {
   useAuthStateListener();
@@ -21,20 +21,26 @@ function App() {
     const key = prompt("Enter the new key name: ");
     if (key) {
       dispatch.i18n.createNewMainKey({ key });
-      socket.emit("createNewMainKey", { key });
+      if (socket) {
+        socket.emit("createNewMainKey", { key });
+      }
     }
   };
 
   const changeMainKeyName = (mainIndex, value) => {
     dispatch.i18n.changeMainKeyName({ mainIndex, value });
-    socket.emit("changeMainKeyName", { mainIndex, value });
+    if (socket) {
+      socket.emit("changeMainKeyName", { mainIndex, value });
+    }
   };
 
   const deleteMainKey = (mainIndex) => {
     const confirm = prompt("Are you sure to delete? Type 'yes' to confirm");
     if (confirm?.toLocaleLowerCase() === "yes") {
       dispatch.i18n.deleteMainKey({ mainIndex });
-      socket.emit("deleteMainKey", { mainIndex });
+      if (socket) {
+        socket.emit("deleteMainKey", { mainIndex });
+      }
     }
   };
 
@@ -42,7 +48,9 @@ function App() {
     const nestedKey = prompt("Enter the new nested key name: ");
     if (nestedKey) {
       dispatch.i18n.createNewNestedKey({ mainIndex, nestedKey });
-      socket.emit("createNewNestedKey", { mainIndex, nestedKey });
+      if (socket) {
+        socket.emit("createNewNestedKey", { mainIndex, nestedKey });
+      }
     }
   };
 
@@ -56,7 +64,9 @@ function App() {
       newNestedKey
     );
     dispatch.i18n.updateNestedKey({ mainIndex, nestedIndex, newNestedKey });
-    socket.emit("updateNestedKey", { mainIndex, nestedIndex, newNestedKey });
+    if (socket) {
+      socket.emit("updateNestedKey", { mainIndex, nestedIndex, newNestedKey });
+    }
   };
 
   const updateNestedKeyValue = ({
@@ -71,12 +81,14 @@ function App() {
       language,
       value,
     });
-    socket.emit("updateNestedKeyValue", {
-      mainIndex,
-      nestedIndex,
-      language,
-      value,
-    });
+    if (socket) {
+      socket.emit("updateNestedKeyValue", {
+        mainIndex,
+        nestedIndex,
+        language,
+        value,
+      });
+    }
   };
 
   const deleteNestedKeyValue = (mainIndex, nestedIndex) => {
@@ -84,7 +96,9 @@ function App() {
     const response = prompt("Are you sure to delete? type 'yes' to confirm");
     if (response === "yes") {
       dispatch.i18n.deleteNestedKeyValue({ mainIndex, nestedIndex });
-      socket.emit("deleteNestedKeyValue", { mainIndex, nestedIndex });
+      if (socket) {
+        socket.emit("deleteNestedKeyValue", { mainIndex, nestedIndex });
+      }
     }
   };
 
@@ -109,7 +123,7 @@ function App() {
             <h2>Loading</h2>
           ) : (
             <div>
-              <Row
+              <I18nManager
                 i18n={i18n}
                 changeMainKeyName={changeMainKeyName}
                 deleteMainKey={deleteMainKey}
@@ -121,7 +135,7 @@ function App() {
             </div>
           )}
         </div>
-        <div className="card">
+        {/* <div className="card">
           <h2>Output</h2>
           <p>{JSON.stringify(i18n)}</p>
           <h3>en</h3>
@@ -130,7 +144,7 @@ function App() {
           <p>{getLangJSON("tc")}</p>
           <h3>sc</h3>
           <p>{getLangJSON("sc")}</p>
-        </div>
+        </div> */}
       </main>
     </div>
   );

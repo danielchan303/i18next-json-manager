@@ -6,7 +6,8 @@ const AppBar = (props) => {
   const { createNewMainKey, getLangJSON } = props;
   const dispatch = useDispatch();
   const i18n = useSelector((state) => state.i18n);
-  const auth = useSelector((state) => state.auth);
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const isConnected = useSelector((state) => state.connection.isConnected);
   const backupRef = React.useRef();
   const enRef = React.useRef();
   const tcRef = React.useRef();
@@ -32,8 +33,11 @@ const AppBar = (props) => {
     )}`;
   };
 
+  const backgroundColor =
+    isAuth && !isConnected ? "red" : isAuth && isConnected ? "green" : "black";
+
   return (
-    <header className="App-header">
+    <header className="App-header" style={{ backgroundColor }}>
       <h1 id="heading">i18n Manager</h1>
       <div>
         <button className="header-button" onClick={createNewMainKey}>
@@ -45,7 +49,7 @@ const AppBar = (props) => {
         <button className="header-button" onClick={downloadHandler}>
           Download
         </button>
-        {!auth.isAuth ? (
+        {!isAuth ? (
           <button className="header-button" onClick={loginHandler}>
             Login
           </button>
