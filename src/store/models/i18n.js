@@ -70,7 +70,7 @@ const i18n = {
       const nestedItem = mainValue.values[nestedIndex];
       nestedItem[language] = value;
       // if typing tc, create sc as well
-      if (language === "tc" && sify(nestedItem.tc) === nestedItem.sc) {
+      if (language === "tc") {
         nestedItem.sc = sify(nestedItem.tc);
       }
       return state;

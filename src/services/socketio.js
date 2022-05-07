@@ -2,6 +2,7 @@ import React from "react";
 import io from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuth } from "firebase/auth";
+import visibilityChangeHandler from "./visiblityCheck";
 
 const useSocket = () => {
   const dispatch = useDispatch();
@@ -11,14 +12,19 @@ const useSocket = () => {
   React.useEffect(() => {
     let i18nSocket;
 
+    const [regVisibilityChangeListener, unRegVisibilityChangeListener] =
+      visibilityChangeHandler(() => {
+        console.log("visible");
+        if (i18nSocket && i18nSocket.disconnected) {
+          i18nSocket.connect();
+        }
+      }, null);
+
     if (isAuth && !storeSocket) {
       // if login, create socket
-      i18nSocket = io.connect(
-        "https://realtime-todo-daniel-chan.herokuapp.com/i18n",
-        {
-          timeout: 2000,
-        }
-      );
+      i18nSocket = io.connect("https://i18n-manager.daniel-chan.ml/i18n", {
+        timeout: 2000,
+      });
       dispatch.connection.setSocket({ socket: i18nSocket });
 
       // auth for further action
@@ -102,6 +108,11 @@ const useSocket = () => {
       // logout, disconnect the socket
       i18nSocket?.close();
     }
+
+    regVisibilityChangeListener();
+    return () => {
+      unRegVisibilityChangeListener();
+    };
   }, [isAuth, storeSocket, dispatch]);
 };
 
