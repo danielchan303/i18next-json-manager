@@ -28,9 +28,7 @@ const AppBar = (props) => {
   };
 
   const createDownloadUrl = (content) => {
-    return `data:text/plain;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(i18n)
-    )}`;
+    return `data:text/plain;charset=utf-8,${content}`;
   };
 
   const backgroundColor =
