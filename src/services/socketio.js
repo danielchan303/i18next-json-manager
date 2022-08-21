@@ -23,6 +23,7 @@ const useSocket = () => {
     if (isAuth && !storeSocket) {
       // if login, create socket
       i18nSocket = io.connect("https://i18n-manager.daniel-chan.ml/i18n", {
+        // i18nSocket = io.connect("http://127.0.0.1:3001/i18n", {
         timeout: 2000,
       });
       dispatch.connection.setSocket({ socket: i18nSocket });
@@ -67,7 +68,7 @@ const useSocket = () => {
 
       i18nSocket.on("getI18nData", (response) => {
         console.log("getI18nData", response);
-        dispatch.i18n.importFromBackup(response[0].data);
+        dispatch.i18n.getProjectsData(response);
       });
 
       i18nSocket.on("createNewMainKey", (response) => {

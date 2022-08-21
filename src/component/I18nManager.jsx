@@ -64,7 +64,7 @@ const Row = (props) => {
 
   return (
     <div>
-      {props.i18n.map((item, mainIndex) => {
+      {props?.i18n?.map((item, mainIndex) => {
         return (
           <>
             <div className="horizontalRow">
