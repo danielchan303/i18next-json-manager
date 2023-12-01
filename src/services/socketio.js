@@ -22,7 +22,7 @@ const useSocket = () => {
 
     if (isAuth && !storeSocket) {
       // if login, create socket
-      i18nSocket = io.connect("https://i18n-manager.daniel-chan.ml/i18n", {
+      i18nSocket = io.connect(`${window.location.origin}/i18n`, {
         // i18nSocket = io.connect("http://127.0.0.1:3001/i18n", {
         timeout: 2000,
       });
