@@ -46,7 +46,7 @@ const AppBar = (props) => {
   };
 
   const createDownloadUrl = (content) => {
-    return `data:text/plain;charset=utf-8,${content}`;
+    return `data:text/plain;charset=utf-8,${encodeURIComponent(content)}`;
   };
 
   let backupJsonString, enJsonString, tcJsonString, scJsonString;
